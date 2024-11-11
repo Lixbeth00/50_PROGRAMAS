@@ -1,0 +1,64 @@
+//LIXBETH DENISSE HERNANDEZ RAMIREZ 
+//22210313
+//LENGUAJE DE INTERFAZ
+//FECHA: 11-11-24
+
+// PROGRAMA 33
+// Suma de elementos en un arreglo
+
+// CODIGO EN PYTHON
+
+/*
+# Lista de números
+numeros = [1, 2, 3, 4, 5]
+
+# Sumar los elementos usando sum()
+suma = sum(numeros)
+
+print(f"La suma de los elementos es: {suma}")
+*/
+
+// CODIGO EN ENSAMBLADOR
+.section .data
+array:      .word 10, 20, 30, 40, 50  // Arreglo de enteros (int32)
+length:     .word 5                   // Longitud del arreglo
+buffer:     .asciz "Resultado: %d\n"  // Formato para imprimir el resultado
+
+.section .bss
+    res: .skip 8                      // Espacio para el resultado (64 bits)
+
+.section .text
+.global _start
+
+_start:
+    // Inicializar registros
+    ldr x0, =array        // Dirección base del arreglo en x0
+    ldr x2, =length       // Dirección de longitud en x2
+    ldr w2, [x2]          // Cargar longitud en w2
+
+    mov x3, #0            // Acumulador inicializado en 0
+    mov x4, #0            // Índice inicializado en 0
+
+sum_loop:
+    cmp x4, x2            // Comparar índice (x4) con la longitud (x2)
+    b.ge end_loop         // Si x4 >= x2, terminar el ciclo
+
+    ldr w5, [x0, x4, LSL #2] // Cargar elemento del arreglo en w5
+    add x3, x3, w5, uxtw  // Extender w5 a 64 bits y sumar al acumulador
+    add x4, x4, #1        // Incrementar índice
+    b sum_loop            // Repetir ciclo
+
+end_loop:
+    // Guardar el resultado en memoria
+    str x3, res
+
+    // Preparar syscall para imprimir (write)
+    ldr x0, =1            // File descriptor (stdout)
+    ldr x1, =buffer       // Mensaje a imprimir
+    mov x2, #14           // Longitud del mensaje (incluye '\n')
+    mov x8, #64           // syscall write
+    svc #0
+
+    // Salir del programa
+    mov x8, #93           // syscall exit
+    svc #0
