@@ -1,0 +1,80 @@
+//LIXBETH DENISSE HERNANDEZ RAMIREZ 
+//22210313
+//LENGUAJE DE INTERFAZ
+//FECHA: 12-11-24
+
+// PROGRAMA 32
+// Potencia (x^n)
+
+// CODIGO EN PYTHON
+
+/*
+def potencia(x, n):
+    # Caso base: cualquier número elevado a la potencia 0 es 1
+    if n == 0:
+        return 1
+    elif n < 0:
+        return 1 / potencia(x, -n)  # Si el exponente es negativo
+    elif n % 2 == 0:
+        half_power = potencia(x, n // 2)
+        return half_power * half_power  # Reducción de multiplicaciones
+    else:
+        return x * potencia(x, n - 1)
+
+# Ejemplo de uso
+base = float(input("Ingresa la base (x): "))
+exponente = int(input("Ingresa el exponente (n): "))
+resultado = potencia(base, exponente)
+print(f"{base}^{exponente} = {resultado}")
+*/
+
+// CODIGO EN ENSAMBLADOR
+.global potencia
+.type potencia, %function
+
+// Función potencia(x, n)
+potencia:
+    // Entrada: x en X0, n en X1
+    // Salida: resultado en X0 (x^n)
+
+    mov x2, #1          // Inicializamos el resultado en 1 (X2 = resultado acumulado)
+
+potencia_loop:
+    cbz x1, fin         // Si n (X1) es 0, salimos del bucle
+    mul x2, x2, x0      // resultado *= x (X2 = X2 * X0)
+    sub x1, x1, #1      // n -= 1
+    b potencia_loop     // Repetimos el ciclo
+
+fin:
+    mov x0, x2          // Colocamos el resultado en X0 para retornar
+    ret                 // Retornar
+
+/*
+#include <stdio.h>
+
+// Declaración de la función ensambladora
+extern long potencia(long x, long n);
+
+int main() {
+    long x, n;
+
+    // Pedir los valores de x y n al usuario
+    printf("Ingrese el valor de la base (x): ");
+    scanf("%ld", &x);
+    printf("Ingrese el valor del exponente (n): ");
+    scanf("%ld", &n);
+
+    if (n < 0) {
+        printf("Error: El exponente debe ser un número entero no negativo.\n");
+        return 1;
+    }
+
+    // Llamada a la función ensambladora
+    long resultado = potencia(x, n);
+
+    // Imprimir el resultado
+    printf("El resultado de %ld^%ld es: %ld\n", x, n, resultado);
+
+    return 0;
+}
+*/
